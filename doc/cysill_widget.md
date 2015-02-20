@@ -1,10 +1,10 @@
 # Ategyn Cysill Ar-lein
 
-Fel rhan o ddarpariaeth yr API Cysill ar lein, rydym ni o techiaith.org wedi rhyddhau ategyn er mwyn integreiddio gwirydd sillafu a gramadeg o fewn eich wefan. Mae'r ategyn yma yn defnyddio API Cysill ar lein, ac felly mae'n enghraifft da o beth allwch chi gyflawni gyda'r API
+Fel rhan o ddarpariaeth yr API Cysill Ar-lein, rydym wedi rhyddhau ategyn er mwyn integreiddio gwirydd sillafu a gramadeg i mewn i'ch gwefan. Mae'r ategyn yma yn defnyddio API Cysill ar lein, ac felly mae'n enghraifft da o beth allwch chi ei gyflawni gyda'r API.
 
-Er mwyn integreiddio'r ategyn o fewn eich wefan, dilynwch y camau isod:
+Er mwyn integreiddio'r ategyn i mewn i'ch gwefan, dilynwch y camau isod:
 
-* Ychwanegwch dau tag `<script>` i cod tudalen eich gwefan. Un gyda'ch allwedd API, ac un i URL y sgript Cysill Ar-lein:
+* Ychwanegwch dau dag `<script>` i god tudalen eich gwefan. Un gyda'ch allwedd API, ac un i URL y sgript Cysill Ar-lein:
     
          <script>
                 var CYSILL_API_KEY = "EICH_ALLWEDD_API";
