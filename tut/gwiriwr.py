@@ -130,7 +130,7 @@ def gwirio_llinell(llinell, geiriadur_personol):
         
         ans = -1
         while (not opsiynau_dict.get(ans)):
-            ans = raw_input("Dewisiwch opsiwn (%s): ".encode('utf-8') % u', '.join(opsiynau_dict.keys())).lower()
+            ans = input(u"Dewisiwch opsiwn (%s): ".encode('utf-8') % u', '.join(opsiynau_dict.keys())).decode('utf-8').lower()
         
         if ans == u'a':
             # anwybyddu
@@ -141,7 +141,7 @@ def gwirio_llinell(llinell, geiriadur_personol):
             geiriadur_personol.add(gair_camsillafu)
         elif ans == 'm':
             # mewnbynnu testun eich hun
-            awgrym = raw_input("Ysgrifennwch testun i cywiro '%s%s%s': ".encode('utf-8') % (Colour.RED, gair_camsillafu, Colour.END)).strip()
+            awgrym = input(u"Ysgrifennwch testun i cywiro '{}{}{}': ".format(Colour.RED, gair_camsillafu, Colour.END).encode('utf-8')).decode('utf-8').strip()
         elif ans == 'g':
             return llinell, 0
         else:
