@@ -13,7 +13,7 @@ except ImportError:
 try:
     # python2
     input = raw_input
-except ImportError:
+except NameError:
     # python3
     input = input
 
