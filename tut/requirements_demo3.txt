@@ -1,0 +1,2 @@
+wikipedia==1.4.0
+python-Levenshtein==0.12.0

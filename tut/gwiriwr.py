@@ -10,6 +10,13 @@ except ImportError:
     import urllib2 as request
     from urllib import urlencode
 
+try:
+    # python2
+    input = raw_input
+except ImportError:
+    # python3
+    input = input
+
 import json
 
 # ==============================
@@ -17,6 +24,8 @@ import json
 # ==============================
 # Eich allwedd API - o https://api.techiaith.org
 # Your API Key - from https://api.techiaith.org
+# Cewch hefyd gadael hyn yn wag, a cadw'ch allwedd API mewn ffeil 'API_KEY'
+# You can also leave this empty and keep your API key in a file called 'API_KEY'
 API_KEY = ""
 
 # Gellir defnyddio 'cy' neu 'en' ar gyfer iaith yr API
@@ -28,6 +37,13 @@ API_URL = "https://api.techiaith.org/cysill/v1/?"
 # ==============
 # = Cod / Code =
 # ==============
+
+if not API_KEY:
+    # ceisio darllen yr API key o ffeil
+    import os
+    if os.path.exists("API_KEY"):
+        with open("API_KEY", 'r') as a:
+            API_KEY = a.read().decode('utf-8').strip()
 
 if API_KEY == "":
     print("""
@@ -103,7 +119,7 @@ def gwirio_llinell(llinell, geiriadur_personol):
 
         print(u"%s.\n\nDewisiwch opsiwn canlynol:\n--------------------------".encode('utf-8') % error['message'])
 
-        opsiynau = ((u'a', u'Anwybyddu'), (u'y', u"Ychwanegu '%s%s%s' i'r geiriadur" % (Colour.RED, gair_camsillafu, Colour.END)), (u'm', 'Mewnbynnu cywiriad eich hun'))
+        opsiynau = ((u'a', u'Anwybyddu'), (u'y', u"Ychwanegu '%s%s%s' i'r geiriadur" % (Colour.RED, gair_camsillafu, Colour.END)), (u'm', 'Mewnbynnu cywiriad eich hun'), (u'g', "Gorffen gwirio'r llinell"))
 
         if nifer_awgrymiadau:
             opsiynau += tuple([(str(i+1), u"Cywiro i '%s%s%s'" % (Colour.GREEN, sugg, Colour.END)) for i, sugg in enumerate(error['suggestions'])])
@@ -114,7 +130,7 @@ def gwirio_llinell(llinell, geiriadur_personol):
         
         ans = -1
         while (not opsiynau_dict.get(ans)):
-            ans = raw_input("Dewisiwch opsiwn (%s): ".encode('utf-8') % u', '.join(opsiynau_dict.keys())).lower()
+            ans = input(u"Dewisiwch opsiwn (%s): ".encode('utf-8') % u', '.join(opsiynau_dict.keys())).decode('utf-8').lower()
         
         if ans == u'a':
             # anwybyddu
@@ -125,7 +141,9 @@ def gwirio_llinell(llinell, geiriadur_personol):
             geiriadur_personol.add(gair_camsillafu)
         elif ans == 'm':
             # mewnbynnu testun eich hun
-            awgrym = raw_input("Ysgrifennwch testun i cywiro '%s%s%s': ".encode('utf-8') % (Colour.RED, gair_camsillafu, Colour.END)).strip()
+            awgrym = input(u"Ysgrifennwch testun i cywiro '{}{}{}': ".format(Colour.RED, gair_camsillafu, Colour.END).encode('utf-8')).decode('utf-8').strip()
+        elif ans == 'g':
+            return llinell, 0
         else:
             try:
                 awgrym = error['suggestions'][int(ans)-1]
