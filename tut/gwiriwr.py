@@ -42,7 +42,7 @@ if not API_KEY:
     # ceisio darllen yr API key o ffeil
     import os
     if os.path.exists("API_KEY"):
-        with open("API_KEY", 'r') as a:
+        with open("API_KEY", 'rb') as a:
             API_KEY = a.read().decode('utf-8').strip()
 
 if API_KEY == "":
@@ -78,7 +78,7 @@ def get_errors(llinell):
     url = API_URL + urlencode(params)
     
     response = request.urlopen(url)
-    response = json.loads(response.read())
+    response = json.loads(response.read().decode('utf-8'))
     if not response['success']:
         # Gwall gyda'r galwad API
         # something went wrong with the API call
@@ -98,9 +98,9 @@ def gwirio_llinell(llinell, geiriadur_personol):
     errors = get_errors(llinell)
 
     if not len(errors):
-        return llinell, 0
+        return llinell, []
     
-    nifer_gwiriadau = 0
+    gwiriadau = []
     
     for error in errors:
         gair_camsillafu = llinell[error['start']:error['start'] + error['length']]
@@ -110,27 +110,28 @@ def gwirio_llinell(llinell, geiriadur_personol):
         if (gair_camsillafu in geiriadur_personol) or (gair_camsillafu.lower() in geiriadur_personol):
             continue
 
-        print(((u"\nGWALL %s:  " % (u"SILLAFU" if error['isSpelling'] else u'GRAMADEG')) +
-            llinell[0:error['start']] + Colour.RED + gair_camsillafu + Colour.END +
-            llinell[error['start']+error['length']:]).encode('utf-8'))
+        print(u"\nGWALL {}:  {}".format(u"SILLAFU" if error['isSpelling'] else u'GRAMADEG',
+                                        u"".join((llinell[0:error['start']], Colour.RED, gair_camsillafu,
+                                                  Colour.END, llinell[error['start']+error['length']:]))
+                                        ))
 
         nifer_awgrymiadau = len(error['suggestions'])
         awgrym = None
 
-        print(u"%s.\n\nDewisiwch opsiwn canlynol:\n--------------------------".encode('utf-8') % error['message'])
+        print(u"{}.\n\nDewisiwch opsiwn canlynol:\n--------------------------".format(error['message']))
 
-        opsiynau = ((u'a', u'Anwybyddu'), (u'y', u"Ychwanegu '%s%s%s' i'r geiriadur" % (Colour.RED, gair_camsillafu, Colour.END)), (u'm', 'Mewnbynnu cywiriad eich hun'), (u'g', "Gorffen gwirio'r llinell"))
+        opsiynau = ((u'a', u'Anwybyddu'), (u'y', u"Ychwanegu '{}{}{}' i'r geiriadur".format(Colour.RED, gair_camsillafu, Colour.END)), (u'm', 'Mewnbynnu cywiriad eich hun'), (u'g', "Gorffen gwirio'r llinell"))
 
         if nifer_awgrymiadau:
-            opsiynau += tuple([(str(i+1), u"Cywiro i '%s%s%s'" % (Colour.GREEN, sugg, Colour.END)) for i, sugg in enumerate(error['suggestions'])])
+            opsiynau += tuple([(str(i+1), u"Cywiro i '{}{}{}'".format(Colour.GREEN, sugg, Colour.END)) for i, sugg in enumerate(error['suggestions'])])
         
         opsiynau_dict = OrderedDict(opsiynau)
         
-        print(u'\n'.join(u"[{}] {}".format(k,v) for k,v in opsiynau_dict.items()).encode('utf-8'))
+        print(u'\n'.join(u"[{}] {}".format(k,v) for k,v in opsiynau_dict.items()))
         
         ans = -1
         while (not opsiynau_dict.get(ans)):
-            ans = input(u"Dewisiwch opsiwn (%s): ".encode('utf-8') % u', '.join(opsiynau_dict.keys())).decode('utf-8').lower()
+            ans = input(u"Dewisiwch opsiwn ({}): ".format(u', '.join(opsiynau_dict.keys()))).lower()
         
         if ans == u'a':
             # anwybyddu
@@ -141,9 +142,9 @@ def gwirio_llinell(llinell, geiriadur_personol):
             geiriadur_personol.add(gair_camsillafu)
         elif ans == 'm':
             # mewnbynnu testun eich hun
-            awgrym = input(u"Ysgrifennwch testun i cywiro '{}{}{}': ".format(Colour.RED, gair_camsillafu, Colour.END).encode('utf-8')).decode('utf-8').strip()
+            awgrym = input(u"Ysgrifennwch testun i cywiro '{}{}{}': ".format(Colour.RED, gair_camsillafu, Colour.END)).strip()
         elif ans == 'g':
-            return llinell, 0
+            return llinell, []
         else:
             try:
                 awgrym = error['suggestions'][int(ans)-1]
@@ -151,9 +152,22 @@ def gwirio_llinell(llinell, geiriadur_personol):
                 continue
 
         if awgrym is not None:
-            nifer_gwiriadau += 1
+            gwiriadau.append((gair_camsillafu, awgrym))
             llinell = llinell[0:error['start']] + awgrym + llinell[error['start']+error['length']:]
             # diweddaru start positions pob 'error' arral
             for pob_err in errors[errors.index(error)+1:]:
                 pob_err['start'] += len(awgrym) - len(gair_camsillafu)
-    return llinell, nifer_gwiriadau
+    return llinell, gwiriadau
+
+def agor_geiriadur(enw="geiriadur.txt"):
+    """Agor geiriadur a dychwelyd set o'r eiriau"""
+
+    with open(enw, 'rb') as g:
+        geiriadur_personol = set(l.strip() for l in g.read().decode('utf-8').split(u'\n'))
+    return geiriadur_personol
+
+def cadw_geiriadur(geiriadur_personol, enw="geiriadur.txt"):
+    """Cadw'r geiriadur personol"""
+    
+    with open(enw, 'wb') as g:
+        g.write(u'\n'.join(sorted(geiriadur_personol)).encode('utf-8'))
