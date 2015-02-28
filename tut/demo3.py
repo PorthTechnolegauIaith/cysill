@@ -21,7 +21,6 @@ def get_match(needle, haystack, errs):
     
     try:
         m = re.search("({}){{{}<{}}}".format(needle, "1i+2d+4s", errs), haystack, re.BESTMATCH)
-        print(m)
         if not m:
             # fall back to a much 'looser' search
             print("{} {}".format(needle_words[0], u"".join("(\W*)(?:{})".format(g) for g in needle_words[1:])))
