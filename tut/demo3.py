@@ -5,10 +5,14 @@ import wikipedia
 from gwiriwr import gwirio_llinell, request, input, agor_geiriadur, cadw_geiriadur
 from xml.etree import cElementTree as ET
 from difflib import SequenceMatcher as SM
-import regex as re
+import re
 
 WIKI_API_URL = "https://cy.wikipedia.org/w/api.php?format=xml&action=query&pageids={}&prop=revisions&rvprop=content"
-
+WIKI_MARKUP_DELIMS = (u'[', u"'", u'<', u'~', u'{', u'#',
+                    # link  bold   ref   sig   cite  redirect
+                      u'=', u'*', u'#', u':', u']')
+                    # head, bullet, list, indent
+                    
 wikipedia.set_lang('cy')
 
 class COLOUR:
@@ -17,17 +21,10 @@ class COLOUR:
     GREEN = '\033[92m'
     END = '\033[0m'
 
-def get_match(needle, haystack, errs):
-    
-    try:
-        m = re.search("({}){{{}<{}}}".format(needle, "1i+2d+4s", errs), haystack, re.BESTMATCH)
-        if not m:
-            # fall back to a much 'looser' search
-            print("{} {}".format(needle_words[0], u"".join("(\W*)(?:{})".format(g) for g in needle_words[1:])))
-            m = re.search("{} {}".format(needle_words[0], u"".join("(\W*)(?:{})".format(g) for g in needle_words[1:])), haystack)
-        return m.group()
-    except AttributeError:
-        return None
+def get_match(needle, haystack):
+    wiki_markup_re = u"(\s?(?:{})*.*?)".format(u"|".join(m if m not in ('[', '{', '*') else "\%s" % m for m in WIKI_MARKUP_DELIMS))
+    m = re.search("({}){}".format(needle[0], u"".join("(?:(\[\[)?({})|(\]\])?({}))".format(g, g) if g != " " else wiki_markup_re for g in needle[1:])), haystack)
+    return m
 
 def gwirio_yn_markup(llinell, llinell_wedi_gwirio, gwiriadau, markup_lines):
     if llinell in markup_lines:
@@ -62,21 +59,36 @@ Wedi methu darganfod y llinell cod cyfateb yn awtomatig.
                 if hen in markup_line:
                     markup_line = markup_line.replace(hen, newydd)
                 else:
-                    substr_yn_markup = get_match(hen, markup_line, len(markup_line)-len(llinell)+int(len(hen)/2))
+                    markup_match = get_match(hen, markup_line)
+                    # spans = [re.search(g, markup_match).span() for g in markup_match.groups()]
                     hen_geiriau = hen.split(u' ')
                     geiriau_newydd = newydd.split(u' ')
-                    if len(hen_geiriau) == len(geiriau_newydd):
-                        re_match = re.search(u"".join(r"""(\W*)(?:{})""".format(g) for g in hen_geiriau), substr_yn_markup)
                         # Fix markup for links
-                        re_groups = [" [[%s|" % g if gr == " [[" else gr for gr, g in zip(re_match.groups(), hen_geiriau)]
-                        markup_line = markup_line.replace(substr_yn_markup, re.sub(u"".join(r"""(?:\W*)({})""".format(g) for g in hen_geiriau), u"".join(r"""{}{}""".format(gr, newydd) for gr, newydd in zip(re_groups, geiriau_newydd)), substr_yn_markup))
-                    else:
-                        import pdb
-                        pdb.set_trace()
-
-
-            markup_lines[i] = markup_line
-            return
+                    k = 0
+                    last = 0
+                    parts = []
+                    for gr in [gr for gr in markup_match.groups() if gr]:
+                        if k == len(hen)-1:
+                            parts.append(hen[last:])
+                        elif gr != hen[k]:
+                            parts.append(hen[last:k])
+                            parts.append(gr)
+                            last = k
+                        else:
+                            k += 1
+                    chunk_newydd = newydd
+                    new_parts = []
+                    for part in parts[::-1]:
+                        if part in newydd:
+                            new_parts.insert(0, part)
+                            chunk_newydd = chunk_newydd[:-len(part)]
+                        elif any(l in WIKI_MARKUP_DELIMS for l in part):
+                            new_parts.insert(0, part)
+                        else:
+                            new_parts.insert(0, chunk_newydd.split(" ")[-1])
+                    print(new_parts, parts)
+                    markup_line = markup_line.replace(u"".join(parts), u"".join(new_parts))
+                markup_lines[i] = markup_line
 
 def lawrlwytho_tudalen(enw):
     tudalen = wikipedia.page(enw)
