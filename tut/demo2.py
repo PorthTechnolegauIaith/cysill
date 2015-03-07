@@ -11,7 +11,7 @@ class COLOUR:
     END = '\033[0m'
 
 def lawrlwytho_tudalen_arhap():
-    data = request.urlopen(u"http://cy.wikipedia.org/wiki/.pr")
+    data = request.urlopen(u"https://cy.wikipedia.org/wiki/Arbennig:Random")
     r = ""
     url = None
     try:
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     geiriadur_personol = agor_geiriadur()
     data, url = lawrlwytho_tudalen_arhap()
 
-    print((u"\n\nGWIRIO {}\n".format(url) + u"-"*(len(url)+7) + u"\n\n").encode('utf-8'))
+    print((u"\n\nGWIRIO {}\n".format(url) + u"-"*(len(url)+7) + u"\n\n"))
 
     html_tudalen_arhap = BeautifulSoup(data)
 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         llinellau_wedi_gwirio.append(llinell_wedi_gwirio)
     
         
-    print(u'Testun wedi gwirio:\n\n{}'.format(u'\n'.join(llinellau_wedi_gwirio)).encode('utf-8'))
-    print(u"\n\nWEDI GORFFEN GWIRIO {}\n".format(url).encode('utf-8'))
+    print(u'Testun wedi gwirio:\n\n{}'.format(u'\n'.join(llinellau_wedi_gwirio)))
+    print(u"\n\nWEDI GORFFEN GWIRIO {}\n".format(url))
     
     cadw_geiriadur(geiriadur_personol)
