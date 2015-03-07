@@ -20,8 +20,9 @@ class CysillTestCase(unittest.TestCase):
         from demo3 import gwirio_yn_markup
         markup_tests = (("rôl sylweddol yn natblygiad democratiaeth senneddol", "rôl sylweddol yn natblygiad democratiaeth seneddol", (("senneddol", "seneddol"),), ["rôl sylweddol yn natblygiad [[democratiaeth]] [[sennedd]]ol"], "rôl sylweddol yn natblygiad [[democratiaeth]] [[senedd]]ol"),
                         ('ceiriau senneddol', 'geiriau seneddol', (('ceiriau', 'geiriau'), ('senneddol', 'seneddol')), ['ceiriau [[sennedd]]ol'], 'geiriau [[senedd]]ol'),
-                        ("yn Bangor", "ym Mangor", (("yn Bangor", "ym Mangor"),), ["yn [[Bangor]]"], "ym [[Bangor|Mangor]]"),
                         ("yn Bangor", "ym Mangor", (("yn Bangor", "ym Mangor"),), ["yn '''Bangor'''"], "ym '''Mangor'''"),
+                        ("neu car", "neu gar", (("neu car", "neu gar"),), ["neu '''car'''"], "neu '''gar'''"),
+                        ("yn Bangor", "ym Mangor", (("yn Bangor", "ym Mangor"),), ["yn [[Bangor]]"], "ym [[Bangor|Mangor]]"),
                         ("yn Bangor", "ym Mangor", (("yn Bangor", "ym Mangor"),), ["yn [http://techiaith.org Bangor]"], "ym [http://techiaith.org Mangor]"))
         for l, l_wedi_gwirio, gwiriadau, markup_lines, cywir in markup_tests:
             gwirio_yn_markup(l, l_wedi_gwirio, gwiriadau, markup_lines)

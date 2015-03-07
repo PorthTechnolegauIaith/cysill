@@ -32,10 +32,10 @@ def gwirio_yn_markup(llinell, llinell_wedi_gwirio, gwiriadau, markup_lines):
         markup_lines[ind] = llinell_wedi_gwirio
         return
 
-    ratios = sorted((t for t in [(i, l, SM(None, l, llinell).ratio()) for i, l in enumerate(markup_lines)] if t[2] > 0.2), key=lambda x:-x[2])
-
+    ratios = sorted((t for t in [(i, l, SM(None, l, llinell).ratio()) for i, l in enumerate(markup_lines)] if t[2] > 0.02), key=lambda x:-x[2])
     if not len(ratios):
         print(u"Dim wedi darganfod llinell i'w gwirio. ABORT!")
+
         return
     
     for i, markup_line, ratio in ratios:
@@ -60,10 +60,6 @@ Wedi methu darganfod y llinell cod cyfateb yn awtomatig.
                     markup_line = markup_line.replace(hen, newydd)
                 else:
                     markup_match = get_match(hen, markup_line)
-                    # spans = [re.search(g, markup_match).span() for g in markup_match.groups()]
-                    hen_geiriau = hen.split(u' ')
-                    geiriau_newydd = newydd.split(u' ')
-                        # Fix markup for links
                     k = 0
                     last = 0
                     parts = []
@@ -71,13 +67,16 @@ Wedi methu darganfod y llinell cod cyfateb yn awtomatig.
                         if k == len(hen)-1:
                             parts.append(hen[last:])
                         elif gr != hen[k]:
-                            parts.append(hen[last:k])
+                            if last != k:
+                                parts.append(hen[last:k])
                             parts.append(gr)
                             last = k
                         else:
                             k += 1
                     chunk_newydd = newydd
                     new_parts = []
+                    import pdb
+                    pdb.set_trace()
                     for part in parts[::-1]:
                         if part in newydd:
                             new_parts.insert(0, part)
@@ -86,9 +85,9 @@ Wedi methu darganfod y llinell cod cyfateb yn awtomatig.
                             new_parts.insert(0, part)
                         else:
                             new_parts.insert(0, chunk_newydd.split(" ")[-1])
-                    print(new_parts, parts)
                     markup_line = markup_line.replace(u"".join(parts), u"".join(new_parts))
                 markup_lines[i] = markup_line
+            break
 
 def lawrlwytho_tudalen(enw):
     tudalen = wikipedia.page(enw)
@@ -104,13 +103,12 @@ def main():
         enw = input(u"Rhowch enw'r tudalen: ")
     
     tudalen, markup = lawrlwytho_tudalen(enw)
-    # markup_lines = markup.split("\n")
-    markup_lines = ["yn [[Bangor]]"]
+    markup_lines = markup.split("\n")
     print((u"\n\nGWIRIO {}\n".format(tudalen.title) + u"-"*(len(tudalen.url)+7) + u"\n\n"))
 
     # cadw pob llinell testun mewn list
-    # llinellau = filter(len, (t.strip() for t in tudalen.content.split(u"\n")))
-    llinellau = ["yn Bangor"]
+    llinellau = filter(len, (t.strip() for t in tudalen.content.split(u"\n")))
+    # llinellau = ["yn Bangor"]
 
     llinellau_wedi_gwirio = [] #tuple (gwreiddiol, newydd)
 
@@ -135,7 +133,7 @@ def main():
     print(u"\n\nWEDI GORFFEN GWIRIO {}\n".format(tudalen.url))
     
     markup_newydd = u"\n".join(markup_lines)
-    if markup_newydd != markup:
+    if markup_newydd != markup or True:
         enw_ffeil = u"{}.txt".format(tudalen.title.replace(u" ", u"_"))
         print(u"Compïwch y testun ô'r ffeil {} yn ôl i Wicipedia".format(enw_ffeil))
     
