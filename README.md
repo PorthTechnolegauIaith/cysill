@@ -1,6 +1,6 @@
 # Adnoddau Cysill Ar-lein
 
-Mae Cysill Ar-lein ar gael fel ategyn i'w ychwanegu at eich gwefan, ac yn ogystal fel API sy'n caniatau defnydd nodweddion gwirio sillafu a gramadeg Cymraeg 'Cysill' o fewn eich cod.
+Mae Cysill Ar-lein ar gael fel ategyn i'w ychwanegu at eich gwefan, ac yn ogystal fel API sy'n caniatáu defnydd nodweddion gwirio sillafu a gramadeg Cymraeg 'Cysill' o fewn eich cod.
 Mae'n ddarpariaeth rhad ac am ddim o'r meddalwedd masnachol [Cysill](http://www.bangor.ac.uk/canolfanbedwyr/cysgliad.php.cy).
 
 Mae'r project yma yn cynnwys y ddogfennaeth, tiwtorialau a chod enghreifftiol cysylltiedig.  
