@@ -6,22 +6,22 @@ Mae'r API yn gweithio dros HTTPS GET, felly gellir defnyddio unrhyw iaith/meddal
 
 ## Tiwtorialau
 
-Mae [Twitorial 1](demo1.md) yn enghaifft o sut i ddefnyddio API Cysill Ar-lein i gwirio testun
+Mae [Twitorial 1](demo1.md) yn enghraifft o sut i ddefnyddio API Cysill Ar-lein i wirio testun
 
-Mae [Tiwtorial 2](demo2.md) yn ehangiad o diwtorial 1, ac yn ddangos sut i lawrlwytho testun o Wicipedia a'i gwirio
+Mae [Tiwtorial 2](demo2.md) yn ehangiad o diwtorial 1, ac yn dangos sut i lwytho testun o Wicipedia i lawr a'i wirio
 
-Mae'r tiwtorial [Ategyn Cysill](cysill_widget.md) yn enghraiff o sut i ddefnyddio'r API gyda ategyn Cysill o fewn eich gwefan eich hun.
+Mae'r tiwtorial [Ategyn Cysill](cysill_widget.md) yn enghraifft o sut i ddefnyddio'r API gyda ategyn Cysill o fewn eich gwefan eich hun.
 
 ## Fersiwn Cyfredol
 
 Mae un fersiwn o API Cysill Ar-lein ar gael. v1 neu 'fersiwn 1'.
-Dychwelir enw y fersiwn sy'n cael ei ddefnyddio yn y canlyniadau JSON.
+Dychwelir enw'r fersiwn sy'n cael ei ddefnyddio yn y canlyniadau JSON.
 
-Mi fydd y URL yn newid ar gyfer pob fersiwn newydd o'r API. Ar hyn o bryd, dyler defnyddio `/v1` ar gyfer fersiwn 1.
+Mi fydd yr URL yn newid ar gyfer pob fersiwn newydd o'r API. Ar hyn o bryd, dylid defnyddio `/v1` ar gyfer fersiwn 1.
 
 ## Sgema
 
-Mae cysylltiad â'r API yn gweithio dros HTTPS yn unig, gan ddefnyddio'r parth `api.techiaith.org/cysill`. Mae'r holl ddata sy'n cael eu derbyn/hanfon yn cael ei drosglwyddo ar ffurf JSON ([unicode-escaped ASCII](http://tools.ietf.org/html/rfc5137)).
+Mae cysylltu â'r API yn gweithio dros HTTPS yn unig, gan ddefnyddio'r parth `api.techiaith.org/cysill`. Mae'r holl ddata sy'n cael ei dderbyn/anfon yn cael ei drosglwyddo ar ffurf JSON ([unicode-escaped ASCII](http://tools.ietf.org/html/rfc5137)).
 
 ## Paramedrau
 
